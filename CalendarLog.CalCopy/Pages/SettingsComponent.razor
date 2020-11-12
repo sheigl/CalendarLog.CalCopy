@@ -1,0 +1,52 @@
+﻿@page "/settings"
+
+@using CalendarLog.CalCopy.Models
+@using CalendarLog.CalCopy.Pages.Components
+@inject IJSRuntime JS
+
+<AlertComponent Show="@ShowAlert" AlertType="@AlertType" Title="@AlertTitle" Message="@AlertMessage" ErrorMessage="@AlertErrorMessage"></AlertComponent>
+<LoadingComponent IsLoading="Loading" />
+
+@if (Settings != null)
+{
+<EditForm Model="@Settings" OnValidSubmit="@(async () => await SaveAsync())">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="d-flex mb-2">
+        <button type="submit" class="btn btn-sm btn-primary ml-auto"><i class="fa fa-save"></i></button>
+    </div>
+    <div class="d-flex flex-column">
+        <div class="mb-2">
+            <label for="proofer-initials">Proofer Initials</label>
+            <InputText class="form-control form-control-sm" id="proofer-initials" @bind-Value="Settings.ProoferInitials" />
+        </div>
+        <div class="mb-2">
+            <label for="api-url">Api Url</label>
+            <InputText class="form-control form-control-sm" id="api-url" @bind-Value="Settings.APIUrl" />
+        </div>
+        <div class="mb-2">
+            <label for="api-key">Api Key</label>
+            <InputText class="form-control form-control-sm" id="api-key" @bind-Value="Settings.APIKey" />
+        </div>
+        <div class="mb-2">
+            <label for="api-secret">Api Secret</label>
+            <InputText class="form-control form-control-sm" id="api-secret" @bind-Value="Settings.SecretKey" />
+        </div>
+        <div class="mb-2">
+            <label for="master-template-location">Master Template File Location</label>
+            <InputText class="form-control form-control-sm mb-1" id="master-template-location" @bind-Value="Settings.MasterTemplateFile"  />
+            <a href="javascript:void(0)" @onclick="@(async () => await JS.InvokeVoidAsync(Constants.JavascriptMethods.IpcRendererSend, Constants.Channels.OnMasterTemplateClickAsync))" class="btn btn-outline-info btn-sm">Select</a>
+        </div>
+        <div class="mb-2">
+            <label for="proofing-location">Proofing Folder Location</label>
+            <InputText class="form-control form-control-sm mb-1" id="proofing-location" @bind-Value="Settings.ProofingFolder" />
+            <a href="javascript:void(0)" @onclick="@(async () => await JS.InvokeVoidAsync(Constants.JavascriptMethods.IpcRendererSend, Constants.Channels.OnProofingFolderClickAsync))" class="btn btn-outline-info btn-sm">Select</a>
+        </div>
+        <div class="mb-2">
+            <label for="working-location">Working Calendar Location</label>
+            <InputText class="form-control form-control-sm mb-1" id="working-location" @bind-Value="Settings.WorkingCalendarFolder" />
+            <a href="javascript:void(0)" @onclick="@(async () => await JS.InvokeVoidAsync(Constants.JavascriptMethods.IpcRendererSend, Constants.Channels.OnWorkingCalendarFolderClickAsync))" class="btn btn-outline-info btn-sm">Select</a>
+        </div>
+    </div>
+</EditForm>
+}

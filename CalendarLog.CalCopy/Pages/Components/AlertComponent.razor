@@ -1,0 +1,19 @@
+﻿@if (Options.Show)
+{
+<div class="alert alert-@(@Options.AlertType.ToString())" role="alert">    
+    @if (!String.IsNullOrEmpty(Options.Title))
+    {
+    <h4 class="title">@Options.Title</h4>
+    }
+
+    @if (!String.IsNullOrEmpty(Options.Message))
+    {
+    <div class="message">@Options.Message</div>
+    }
+
+    @if (!String.IsNullOrEmpty(Options.ErrorMessage))
+    {
+    <div class="error-message">@Options.ErrorMessage</div>
+    }
+</div>
+}

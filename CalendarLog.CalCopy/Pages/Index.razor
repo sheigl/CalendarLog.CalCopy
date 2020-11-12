@@ -1,0 +1,67 @@
+﻿@page "/"
+
+@using CalendarLog.CalCopy.Pages.Components
+
+<AlertComponent AlertType="@AlertType" Title="@AlertTitle" Message="@AlertMessage"></AlertComponent>
+
+<LoadingComponent IsLoading="Loading" />
+
+<div class="d-flex mb-4">
+    <div class="ml-auto">
+        <button class="btn btn-sm btn-outline-secondary" @onclick="@(async () => await OnCopyCalendarsAsync())" disabled="@(!ActiveCalendars.Any() || IsCopying)">
+            <i class="fa fa-copy"></i> Copy Calendars
+        </button>
+    </div>
+    <div class="ml-2">
+        <button class="btn btn-sm btn-primary" @onclick="@(async () => await OnSyncClickAsync())" disabled="@(IsCopying)">
+            <i class="fa fa-sync"></i> Sync
+        </button>
+    </div>
+</div>
+
+@if (ActiveCalendars.Any())
+{
+    <div class="component">
+        <h5>Active Calendars</h5>
+        <div class="active-calendars">
+            @foreach (var calendar in ActiveCalendars)
+            {
+            <div class="flex-grid calendar-row mt-1 mb-1">
+                <div class="p-1 flex-col">
+                    <span class="calendar-item">
+                        @calendar.CommunityCode @calendar.CommunityName <span class="badge badge-info">@calendar.CalendarType</span>
+                    </span>
+                </div>
+
+                <div class="flex-col">
+                    <span class="ml-2 mr-2"></span>
+                    @if (calendar.StatusProcessing)
+                    {
+                        <span class="text-primary animate__animated animate__fadeIn"><i class="fas fa-circle-notch fa-spin"></i></span>
+                    }
+
+                    @if (calendar.StatusCompleted)
+                    {
+                        <span class="text-success animate__animated animate__fadeIn"><i class="far fa-check-circle"></i></span>
+                    }
+
+                    @if (calendar.StatusError)
+                    {
+                        <span class="text-danger animate__animated animate__fadeIn"><i class="far fa-times-circle"></i></span>
+                    }
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+}
+
+@if (!String.IsNullOrEmpty(Log))
+{ 
+    <div class="component">
+        <h5>Log Output</h5>
+        <div class="log">
+            @Log
+        </div>
+    </div>
+}

@@ -10,6 +10,8 @@ using CalendarLog.CalCopy.Models;
 using CalendarLog.CalCopy.Services;
 using System.IO;
 using System;
+using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace CalendarLog.CalCopy
 {
@@ -22,8 +24,6 @@ namespace CalendarLog.CalCopy
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             string dbPath = Path.Combine(
@@ -43,7 +43,6 @@ namespace CalendarLog.CalCopy
             services.AddControllers();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -53,7 +52,6 @@ namespace CalendarLog.CalCopy
             else
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
@@ -74,59 +72,106 @@ namespace CalendarLog.CalCopy
 
         public async void BootStrap()
         {
-            //Electron.Menu.SetApplicationMenu(new MenuItem[] { });
-
-            BrowserWindowOptions options = new BrowserWindowOptions 
+            if (HybridSupport.IsElectronActive)
             {
-                Show = false,
-                DarkTheme = true,
-                //TitleBarStyle = TitleBarStyle.hiddenInset,
-                BackgroundColor = "#343d45"
-            };
+                MenuInit();
 
-            BrowserWindow window = await Electron.WindowManager.CreateWindowAsync(options);            
-            window.WebContents.OnCrashed += async (killed) =>
-            {
-                var options = new MessageBoxOptions("This process has crashed.")
+                BrowserWindowOptions options = new BrowserWindowOptions
                 {
-                    Type = MessageBoxType.info,
-                    Title = "Renderer Process Crashed",
-                    Buttons = new string[] { "Reload", "Close" }
-                };
-                var result = await Electron.Dialog.ShowMessageBoxAsync(options);
-
-                if (result.Response == 0)
-                {
-                    window.Reload();
-                }
-                else
-                {
-                    window.Close();
-                }
-            };
-
-            window.OnUnresponsive += async () => 
-            {
-                var options = new MessageBoxOptions("This process is hanging.")
-                {
-                    Type = MessageBoxType.info,
-                    Title = "Renderer Process Hanging",
-                    Buttons = new string[] { "Reload", "Close" }
+                    Show = false,
+                    DarkTheme = true,
+                    //TitleBarStyle = TitleBarStyle.hiddenInset,
+                    BackgroundColor = "#343d45"
                 };
 
-                var result = await Electron.Dialog.ShowMessageBoxAsync(options);
-
-                if (result.Response == 0)
+                BrowserWindow window = await Electron.WindowManager.CreateWindowAsync(options);
+                window.WebContents.OnCrashed += async (killed) =>
                 {
-                    window.Reload();
-                }
-                else
-                {
-                    window.Close();
-                }
-            };
+                    var options = new MessageBoxOptions("This process has crashed.")
+                    {
+                        Type = MessageBoxType.info,
+                        Title = "Renderer Process Crashed",
+                        Buttons = new string[] { "Reload", "Close" }
+                    };
+                    var result = await Electron.Dialog.ShowMessageBoxAsync(options);
 
-            window.OnReadyToShow += () => window.Show();
+                    if (result.Response == 0)
+                    {
+                        window.Reload();
+                    }
+                    else
+                    {
+                        window.Close();
+                    }
+                };
+
+                window.OnUnresponsive += async () =>
+                {
+                    var options = new MessageBoxOptions("This process is hanging.")
+                    {
+                        Type = MessageBoxType.info,
+                        Title = "Renderer Process Hanging",
+                        Buttons = new string[] { "Reload", "Close" }
+                    };
+
+                    var result = await Electron.Dialog.ShowMessageBoxAsync(options);
+
+                    if (result.Response == 0)
+                    {
+                        window.Reload();
+                    }
+                    else
+                    {
+                        window.Close();
+                    }
+                };
+
+                window.OnReadyToShow += () => window.Show();
+            }
+        }
+
+        private void MenuInit()
+        {
+            if (HybridSupport.IsElectronActive)
+            {
+                var menu = new MenuItem[] 
+                {
+                    new MenuItem
+                    { 
+                        Label = "File",
+                        Submenu = new MenuItem[]
+                        {
+                            new MenuItem { Label = "Quit", Accelerator = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "Cmd+Q" : "Alt+F4", Role = MenuRole.quit }
+                        }
+                    },
+                    new MenuItem 
+                    { 
+                        Label = "Edit", 
+                        Submenu = new MenuItem[] 
+                        {
+                            new MenuItem { Label = "Undo", Accelerator = "CmdOrCtrl+Z", Role = MenuRole.undo },
+                            new MenuItem { Label = "Redo", Accelerator = "Shift+CmdOrCtrl+Z", Role = MenuRole.redo },
+                            new MenuItem { Type = MenuType.separator },
+                            new MenuItem { Label = "Cut", Accelerator = "CmdOrCtrl+X", Role = MenuRole.cut },
+                            new MenuItem { Label = "Copy", Accelerator = "CmdOrCtrl+C", Role = MenuRole.copy },
+                            new MenuItem { Label = "Paste", Accelerator = "CmdOrCtrl+V", Role = MenuRole.paste },
+                            new MenuItem { Label = "Select All", Accelerator = "CmdOrCtrl+A", Role = MenuRole.selectall }
+                        }
+                    },
+                    new MenuItem 
+                    { 
+                        Label = "Window", 
+                        Role = MenuRole.window, 
+                        Submenu = new MenuItem[] 
+                        {
+                            new MenuItem { Label = "Minimize", Accelerator = "CmdOrCtrl+M", Role = MenuRole.minimize },
+                            new MenuItem { Label = "Close", Accelerator = "CmdOrCtrl+W", Role = MenuRole.close }
+                        }
+                    }
+                };
+
+                Electron.Menu.SetApplicationMenu(menu);
+            }
         }
     }
 }

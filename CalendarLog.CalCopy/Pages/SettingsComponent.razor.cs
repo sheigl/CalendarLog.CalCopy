@@ -1,14 +1,10 @@
 ﻿using CalendarLog.CalCopy.Models;
 using CalendarLog.CalCopy.Pages.Components;
 using CalendarLog.CalCopy.Services;
-using ElectronNET.API;
 using ElectronNET.API.Entities;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.JSInterop;
 using System;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -77,6 +73,12 @@ namespace CalendarLog.CalCopy.Pages
                     Context.Update(Settings);
 
                 await Context.SaveChangesAsync();
+
+                AlertOptions.Show = true;
+                AlertOptions.AlertType = AlertComponent.AlertTypes.success;
+                AlertOptions.Title = "Great!";
+                AlertOptions.Message = "Your settings have been saved.";
+                AlertOptions.DismissIn = TimeSpan.FromSeconds(3);
             }
             catch (Exception ex)
             {

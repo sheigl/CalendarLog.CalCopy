@@ -43,7 +43,7 @@ namespace CalendarLog.CalCopy.Pages.Components
                             _autohideTimer = null;
                         }
 
-                        _autohideTimer = new Timer(OnAutoHide, _options, (int)_options.DismissIn.Value.TotalMilliseconds, Timeout.Infinite);                        
+                        _autohideTimer = new Timer(OnAutohide, _options, (int)_options.DismissIn.Value.TotalMilliseconds, Timeout.Infinite);                        
                     }
 
                     break;
@@ -52,10 +52,10 @@ namespace CalendarLog.CalCopy.Pages.Components
             }
         }
 
-        private static void OnAutoHide(object state)
+        private async void OnAutohide(object state)
         {
-            AlertOptions options = state as AlertOptions;
-            options.Show = false;
+            Options.Show = false;
+            await InvokeAsync(() => StateHasChanged());
         }
 
         public enum AlertTypes

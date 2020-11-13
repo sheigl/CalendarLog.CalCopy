@@ -31,6 +31,7 @@ namespace CalendarLog.CalCopy.Pages
         public AlertComponent.AlertOptions AlertOptions { get; set; } =
             new AlertComponent.AlertOptions 
             {
+                Show = true,
                 AlertType = AlertComponent.AlertTypes.info,
                 Title = "Uh oh! There's nothing to copy",
                 Message = "Please sync your active calendars to begin copying."

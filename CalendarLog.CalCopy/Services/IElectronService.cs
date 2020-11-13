@@ -7,7 +7,6 @@ namespace CalendarLog.CalCopy.Services
 {
     public interface IElectronService
     {
-        Task<BrowserWindow> GetFocusedWindowAsync();
         IElectronService RegisterListener(string channel, Action<object> listener);
         Task<string> SelectDialogAsync(OpenDialogProperty property, string title = null, string message = null);
     }

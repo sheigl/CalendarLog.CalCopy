@@ -5,6 +5,7 @@ using ElectronNET.API.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -27,7 +28,7 @@ namespace CalendarLog.CalCopy.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            Settings = await Context.Settings.FirstOrDefaultAsync() ?? new Settings();
+            Settings = await Context.Settings.OrderBy(setting => setting.SettingsId).FirstOrDefaultAsync() ?? new Settings();
         }
 
         protected override void OnAfterRender(bool firstRender)

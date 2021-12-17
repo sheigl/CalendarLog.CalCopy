@@ -35,7 +35,7 @@ namespace CalendarLog.CalCopy.Services
                 return;
             }
 
-            Settings settings = await _context.Settings.FirstOrDefaultAsync();
+            Settings settings = await _context.Settings.OrderBy(setting => setting.SettingsId).FirstOrDefaultAsync();
 
             try
             {

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace CalendarLog.CalCopy.Services
 
         public async Task<List<CalendarEntryVM>> GetCalendarsByApiKeyAsync()
         {
-            Settings settings = await _context.Settings.FirstOrDefaultAsync();
+            Settings settings = await _context.Settings.OrderBy(setting => setting.SettingsId).FirstOrDefaultAsync();
 
             HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Post, new Uri($"{settings.APIUrl}?apiKey={settings.APIKey}"));
             req.Content = new StringContent(JsonConvert.SerializeObject(new ApiKeyVM { SecretKey = settings.SecretKey, APIKey = settings.APIKey }), Encoding.UTF8, "application/json");

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 
 namespace CalendarLog.CalCopy.Pages.Components

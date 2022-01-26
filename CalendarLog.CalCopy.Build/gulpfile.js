@@ -10,7 +10,7 @@ const csso = require('gulp-csso');
 const replace = require('gulp-replace');
 
 const config = {}
-config.root = './wwwroot'
+config.root = '../CalendarLog.CalCopy/wwwroot'
 config.css = config.root + '/css';
 config.assets = './assets';
 config.cssAssets = config.assets + '/css';

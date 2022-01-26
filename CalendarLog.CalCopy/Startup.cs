@@ -36,15 +36,18 @@ namespace CalendarLog.CalCopy
             services.AddDbContext<CalCopyDbContext>(opts => opts.UseSqlite($"Filename={dbPath}"));
             services.AddSingleton<IElectronService, ElectronService>();
             services.AddSingleton<INotificationService, NotificationService>();
-            services.AddScoped<ICopyCalendarService, CopyCalendarService>();
+            services.AddScoped<ICopyCalendarService, CopyCalendarService>()
+                .AddScoped<GoogleSheetsClient>();
 
-            services.AddHttpClient<ICalendarLogClient, CalendarLogClient>();
+            //services.AddHttpClient<ICalendarLogClient, CalendarLogClient>();
 
             services.AddControllers();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, CalCopyDbContext context)
         {
+            context.Database.Migrate();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

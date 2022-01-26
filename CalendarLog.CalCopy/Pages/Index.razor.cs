@@ -13,8 +13,8 @@ namespace CalendarLog.CalCopy.Pages
 {
     public partial class Index
     {
-        [Inject]
-        public ICalendarLogClient Client { get; set; }
+        //[Inject]
+        //public ICalendarLogClient Client { get; set; }
 
         [Inject]
         public ICopyCalendarService CopyCalendarService { get; set; }
@@ -22,10 +22,13 @@ namespace CalendarLog.CalCopy.Pages
         [Inject]
         public INotificationService NotificationService { get; set; }
 
+        [Inject]
+        public GoogleSheetsClient GoogleSheetsClient { get; set; }
+
         public bool Loading { get; set; }
 
 
-        public List<CalendarEntryVM> ActiveCalendars { get; set; } = new List<CalendarEntryVM>();
+        public List<StatDocRow> ActiveCalendars { get; set; } = new List<StatDocRow>();
         public string Log { get; set; }
         
         public AlertComponent.AlertOptions AlertOptions { get; set; } =
@@ -44,8 +47,10 @@ namespace CalendarLog.CalCopy.Pages
         {
             try
             {
+                await GoogleSheetsClient.GetCalendarsAsync();
+
                 Loading = true;
-                ActiveCalendars = await Client.GetCalendarsByApiKeyAsync();
+                ActiveCalendars = null;//await Client.GetCalendarsByApiKeyAsync();
 
                 if (!ActiveCalendars.Any())
                 {
@@ -112,7 +117,7 @@ namespace CalendarLog.CalCopy.Pages
                     }
                 });
 
-                BatchComplete = ActiveCalendars.Count<CalendarEntryVM>(cal => cal.StatusCompleted) == ActiveCalendars.Count;
+                BatchComplete = ActiveCalendars.Count<StatDocRow>(cal => cal.StatusCompleted) == ActiveCalendars.Count;
 
                 await CopyCalendarService.CopyCalendarsAsync(ActiveCalendars);
 

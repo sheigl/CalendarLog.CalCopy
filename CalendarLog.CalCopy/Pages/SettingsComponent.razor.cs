@@ -19,6 +19,9 @@ namespace CalendarLog.CalCopy.Pages
         [Inject]
         public IElectronService Electron { get; set; }
 
+        [Inject]
+        public GoogleSheetsClient GoogleSheetsClient { get; set; }
+
         public bool Loading { get; set; }
         public bool IsSaving { get; set; }
         public Settings Settings { get; set; }
